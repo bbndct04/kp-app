@@ -2,212 +2,246 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#1e2d5e">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BlotterLink">
+    <meta name="application-name" content="BlotterLink">
+    <meta name="msapplication-TileColor" content="#1e2d5e">
+    <meta name="description" content="Barangay New Kababae Official Complaint & Incident Reporting System">
+
+    {{-- PWA Manifest --}}
+    <link rel="manifest" href="/manifest.json">
+
+    {{-- Apple Touch Icons --}}
+    <link rel="apple-touch-icon" href="{{ asset('images/blotterlink-logo.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/blotterlink-logo.png') }}">
+
     <title>BlotterLink — {{ $title ?? 'Dashboard' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    {{-- AOS --}}
-    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
 </head>
-<body class="bg-blotter font-sans antialiased" x-data="{ sidebarOpen: true }">
+<body style="background:#f5f7fa;font-family:Inter,sans-serif;">
 
-<div class="flex min-h-screen">
+@php $role = auth()->user()->getRoleNames()->first() ?? 'resident'; @endphp
 
-    {{-- ═══════════════════════════════
-         SIDEBAR
-    ═══════════════════════════════ --}}
-    <aside class="sidebar glass-sidebar" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-        style="transition: transform .3s ease;">
+{{-- Sidebar Overlay (mobile) --}}
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<div style="display:flex;min-height:100vh;">
+
+    {{-- ═══════ SIDEBAR ═══════ --}}
+    <aside class="sidebar" id="sidebar">
 
         {{-- Logo --}}
-        <div style="padding:20px 16px 16px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:12px;">
-            <svg width="38" height="42" viewBox="0 0 200 220" fill="none">
-                <path d="M100 8 L182 42 L182 110 C182 158 144 196 100 212 C56 196 18 158 18 110 L18 42 Z"
-                    fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-                <path d="M100 26 L166 54 L166 110 C166 149 136 181 100 195 C64 181 34 149 34 110 L34 54 Z"
-                    fill="rgba(255,255,255,0.10)"/>
-                <g transform="translate(100,108) rotate(-35)">
-                    <rect x="-8" y="-38" width="16" height="32" rx="3" fill="rgba(255,255,255,0.9)"/>
-                    <rect x="-8" y="-46" width="16" height="12" rx="3" fill="rgba(255,255,255,0.55)"/>
-                    <line x1="0" y1="-6" x2="0" y2="12" stroke="rgba(14,30,91,0.4)" stroke-width="1.5"/>
-                    <circle cx="0" cy="14" r="2.5" fill="rgba(14,30,91,0.5)"/>
-                </g>
-            </svg>
-            <div>
-                <div style="color:#fff;font-size:15px;font-weight:700;line-height:1.2;">BlotterLink</div>
-                <div style="color:rgba(255,255,255,.4);font-size:10.5px;letter-spacing:.5px;text-transform:uppercase;">Brgy. System</div>
+        <div style="padding:16px 18px 14px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:12px;">
+            <div style="width:36px;height:36px;border-radius:50%;overflow:hidden;border:2px solid rgba(255,255,255,.25);flex-shrink:0;">
+                <img src="{{ asset('images/blotterlink-logo.png') }}" alt="BlotterLink"
+                    style="width:100%;height:100%;object-fit:cover;display:block;">
             </div>
+            <div style="flex:1;">
+                <div style="color:#fff;font-size:14px;font-weight:700;">BlotterLink</div>
+                <div style="color:rgba(255,255,255,.4);font-size:10px;letter-spacing:.5px;text-transform:uppercase;">Brgy. New Kababae</div>
+            </div>
+            {{-- Close button (mobile only) --}}
+            <button onclick="closeSidebar()"
+                style="display:none;background:none;border:none;color:rgba(255,255,255,.5);cursor:pointer;padding:4px;border-radius:6px;font-size:18px;line-height:1;"
+                id="sidebar-close">✕</button>
         </div>
 
-        {{-- Navigation --}}
-        <nav style="flex:1;padding:14px 10px;overflow-y:auto;">
-
-            <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.25);padding:12px 8px 6px;">
-                Menu
-            </div>
-
-            @php $role = auth()->user()->getRoleNames()->first() ?? 'resident'; @endphp
+        {{-- Nav --}}
+        <nav style="flex:1;padding:14px 12px;overflow-y:auto;">
+            <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.3);padding:8px 6px 6px;">Menu</div>
 
             @if($role === 'resident')
-                <a href="{{ route('dashboard') }}"
-                    class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <a href="{{ route('dashboard') }}" class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}" onclick="closeSidebar()">
+                    <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                     Dashboard
                 </a>
-                <a href="{{ route('complaints.create') }}" class="nav-item {{ request()->routeIs('complaints.create') ? 'active' : '' }}">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <a href="{{ route('complaints.create') }}" class="nav-item {{ request()->routeIs('complaints.create') ? 'active' : '' }}" onclick="closeSidebar()">
+                    <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                     Submit Complaint
                 </a>
-                <a href="#" class="nav-item {{ request()->routeIs('my-reports') ? 'active' : '' }}">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <a href="{{ route('my-reports') }}" class="nav-item {{ request()->routeIs('my-reports') ? 'active' : '' }}" onclick="closeSidebar()">
+                    <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                     My Reports
                 </a>
-                <a href="#" class="nav-item {{ request()->routeIs('track') ? 'active' : '' }}">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <a href="{{ route('track') }}" class="nav-item {{ request()->routeIs('track') ? 'active' : '' }}" onclick="closeSidebar()">
+                    <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                     Track Status
                 </a>
 
-            @elseif($role === 'staff')
-                <a href="{{ route('dashboard') }}"
-                    class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            @elseif(in_array($role, ['admin', 'staff']))
+                <a href="{{ route('admin.dashboard') }}" class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" onclick="closeSidebar()">
+                    <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                     Dashboard
                 </a>
-                <a href="#" class="nav-item">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <a href="{{ route('admin.complaints') }}" class="nav-item {{ request()->routeIs('admin.complaints') || request()->routeIs('staff.complaints.*') ? 'active' : '' }}" onclick="closeSidebar()">
+                    <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                     All Complaints
                 </a>
-
-            @elseif($role === 'admin')
-                <a href="{{ route('dashboard') }}"
-                    class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                    Dashboard
-                </a>
-                <a href="#" class="nav-item">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                    All Complaints
-                </a>
-                <a href="#" class="nav-item">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <a href="{{ route('admin.users') }}" class="nav-item {{ request()->routeIs('admin.users') ? 'active' : '' }}" onclick="closeSidebar()">
+                    <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                     Manage Users
                 </a>
-                <a href="#" class="nav-item">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                <a href="{{ route('admin.analytics') }}" class="nav-item {{ request()->routeIs('admin.analytics') ? 'active' : '' }}" onclick="closeSidebar()">
+                    <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
                     Analytics
                 </a>
             @endif
 
-            {{-- Profile (all roles) --}}
-            <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.25);padding:16px 8px 6px;">
-                Account
-            </div>
-            <a href="#" class="nav-item">
-                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.3);padding:14px 6px 6px;">Account</div>
+            <a href="{{ route('profile') }}" class="nav-item {{ request()->routeIs('profile') ? 'active' : '' }}" onclick="closeSidebar()">
+                <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 My Profile
             </a>
-
         </nav>
 
         {{-- User + Logout --}}
-        <div style="padding:12px 10px;border-top:1px solid rgba(255,255,255,.07);">
-            <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;margin-bottom:4px;">
-                <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--blue-500),var(--blue-700));display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;flex-shrink:0;">
+        <div style="padding:12px;border-top:1px solid rgba(255,255,255,.08);">
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;margin-bottom:4px;">
+                <div style="width:34px;height:34px;border-radius:50%;background:#4169b8;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;flex-shrink:0;">
                     {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                 </div>
                 <div style="flex:1;min-width:0;">
                     <div style="color:#fff;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
                         {{ auth()->user()->name }}
                     </div>
-                    <div style="color:rgba(255,255,255,.4);font-size:11px;text-transform:capitalize;">
-                        {{ auth()->user()->getRoleNames()->first() ?? 'resident' }}
-                    </div>
+                    <div style="color:rgba(255,255,255,.4);font-size:11px;text-transform:capitalize;">{{ $role }}</div>
                 </div>
             </div>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit"
-                    style="display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;border-radius:8px;background:none;border:none;cursor:pointer;color:rgba(255,120,120,.75);font-size:13.5px;font-weight:500;font-family:Inter,sans-serif;transition:all .2s;"
-                    onmouseover="this.style.background='rgba(185,28,28,.15)';this.style.color='#ff9090'"
-                    onmouseout="this.style.background='none';this.style.color='rgba(255,120,120,.75)'">
+                    style="display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;border-radius:8px;background:none;border:none;cursor:pointer;color:rgba(255,160,160,.75);font-size:13px;font-weight:500;font-family:Inter,sans-serif;"
+                    onmouseover="this.style.background='rgba(185,28,28,.2)';this.style.color='#fca5a5'"
+                    onmouseout="this.style.background='none';this.style.color='rgba(255,160,160,.75)'">
                     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                     Logout
                 </button>
             </form>
         </div>
-
     </aside>
 
-    {{-- ═══════════════════════════════
-         MAIN CONTENT
-    ═══════════════════════════════ --}}
-    <div class="main-content flex flex-col" style="flex:1;">
+    {{-- ═══════ MAIN CONTENT ═══════ --}}
+    <div class="main-content" id="main-content" style="margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh;">
 
         {{-- TOPBAR --}}
-        <header class="topbar glass-dark"
-            style="position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(255,255,255,.07);">
+        <header class="topbar">
 
-            {{-- Toggle Sidebar --}}
-            <button @click="sidebarOpen = !sidebarOpen"
-                style="background:none;border:none;cursor:pointer;color:rgba(255,255,255,.6);padding:6px;">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            {{-- Hamburger (mobile) --}}
+            <button class="hamburger" id="hamburger" onclick="openSidebar()" style="display:none;">
+                <span></span>
+                <span></span>
+                <span></span>
             </button>
 
-            {{-- Page Title --}}
             <div>
-                <div style="font-size:17px;font-weight:700;color:#fff;letter-spacing:-.3px;">
+                <div style="font-size:18px;font-weight:700;color:#1e2d5e;letter-spacing:-.3px;">
                     {{ $header ?? 'Dashboard' }}
                 </div>
             </div>
-
             <div style="flex:1;"></div>
 
-            {{-- Search --}}
-            <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:7px 12px;width:220px;">
-                <svg width="14" height="14" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            {{-- Search (hidden on mobile) --}}
+            <div class="topbar-search" style="display:flex;align-items:center;gap:8px;background:#f5f7fa;border:1.5px solid #e5e9f0;border-radius:8px;padding:7px 14px;width:240px;">
+                <svg width="14" height="14" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                 <input type="text" placeholder="Search..."
-                    style="border:none;background:none;font-size:13px;color:#fff;outline:none;width:100%;"
-                    placeholder="Search...">
+                    style="border:none;background:none;font-size:13px;color:#1e2d5e;outline:none;width:100%;font-family:Inter,sans-serif;">
             </div>
 
-            {{-- Notification Bell --}}
-            <div style="position:relative;cursor:pointer;">
-                <div style="width:38px;height:38px;border-radius:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;">
-                    <svg width="18" height="18" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                </div>
-                <div style="position:absolute;top:6px;right:6px;width:7px;height:7px;background:var(--blue-500);border-radius:50%;border:1.5px solid transparent;"></div>
+            {{-- Bell (hidden on mobile) --}}
+            <div class="topbar-bell" style="width:38px;height:38px;border-radius:8px;background:#f5f7fa;border:1.5px solid #e5e9f0;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;">
+                <svg width="17" height="17" fill="none" stroke="#64748b" stroke-width="1.8" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                <div style="position:absolute;top:7px;right:7px;width:7px;height:7px;background:#3554a0;border-radius:50%;border:1.5px solid #fff;"></div>
             </div>
 
-            {{-- User Avatar --}}
-            <div style="display:flex;align-items:center;gap:8px;padding:5px 10px 5px 5px;border-radius:10px;cursor:pointer;border:1px solid transparent;"
-                onmouseover="this.style.background='rgba(255,255,255,.06)';this.style.borderColor='rgba(255,255,255,.1)'"
-                onmouseout="this.style.background='none';this.style.borderColor='transparent'">
-                <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--blue-500),var(--blue-700));display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;">
+            {{-- User --}}
+            <div style="display:flex;align-items:center;gap:10px;padding:5px 10px 5px 5px;border-radius:10px;">
+                <div style="width:34px;height:34px;border-radius:50%;background:#1e2d5e;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;flex-shrink:0;">
                     {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                 </div>
-                <div>
-                    <div style="font-size:13.5px;font-weight:600;color:#fff;">{{ auth()->user()->name }}</div>
-                    <div style="font-size:11px;color:rgba(255,255,255,.45);text-transform:capitalize;">{{ auth()->user()->getRoleNames()->first() ?? 'resident' }}</div>
+                <div class="user-name">
+                    <div style="font-size:13.5px;font-weight:600;color:#1e2d5e;">{{ auth()->user()->name }}</div>
+                    <div style="font-size:11px;color:#94a3b8;text-transform:capitalize;">{{ $role }}</div>
                 </div>
             </div>
-
         </header>
 
-        {{-- Page Content --}}
+        {{-- Content --}}
         <main style="padding:28px;flex:1;">
             {{ $slot }}
         </main>
-
     </div>
 </div>
 
-{{-- GSAP + AOS --}}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 <script>
-    AOS.init({ duration: 500, once: true, offset: 50 });
-    gsap.from('.sidebar', { duration: .6, x: -20, opacity: 0, ease: 'power2.out' });
-    gsap.from('.topbar', { duration: .5, y: -10, opacity: 0, ease: 'power2.out', delay: .2 });
-    gsap.from('main > *', { duration: .5, y: 20, opacity: 0, stagger: .08, ease: 'power2.out', delay: .3 });
+// ─── Mobile Sidebar Toggle ───
+function openSidebar() {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('sidebar-overlay').classList.add('active');
+    document.getElementById('sidebar-close').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('active');
+    document.getElementById('sidebar-close').style.display = 'none';
+    document.body.style.overflow = '';
+}
+
+// ─── PWA Service Worker ───
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then(reg => console.log('SW registered:', reg.scope))
+            .catch(err => console.log('SW error:', err));
+    });
+}
+
+// ─── PWA Install Prompt ───
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    showInstallBanner();
+});
+
+function showInstallBanner() {
+    const banner = document.createElement('div');
+    banner.id = 'pwa-banner';
+    banner.innerHTML = `
+        <div style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1e2d5e;color:#fff;border-radius:12px;padding:14px 20px;display:flex;align-items:center;gap:14px;z-index:9999;box-shadow:0 8px 30px rgba(0,0,0,.3);max-width:340px;width:calc(100% - 40px);">
+            <img src="{{ asset('images/blotterlink-logo.png') }}" style="width:36px;height:36px;border-radius:50%;">
+            <div style="flex:1;">
+                <div style="font-size:13px;font-weight:700;">Install BlotterLink</div>
+                <div style="font-size:12px;color:rgba(255,255,255,.6);">Add to Home Screen for quick access</div>
+            </div>
+            <div style="display:flex;gap:8px;">
+                <button onclick="installPWA()" style="background:#fff;color:#1e2d5e;border:none;border-radius:6px;padding:7px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;">Install</button>
+                <button onclick="dismissBanner()" style="background:rgba(255,255,255,.1);color:#fff;border:none;border-radius:6px;padding:7px 10px;font-size:13px;cursor:pointer;font-family:Inter,sans-serif;">✕</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(banner);
+}
+
+function installPWA() {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(() => {
+            deferredPrompt = null;
+            dismissBanner();
+        });
+    }
+}
+
+function dismissBanner() {
+    const b = document.getElementById('pwa-banner');
+    if (b) b.remove();
+}
 </script>
 
 </body>

@@ -62,20 +62,25 @@ class AdminController extends Controller
 
     // Update Complaint Status
     public function updateStatus(Request $request, Complaint $complaint)
-    {
-        $request->validate([
-            'status'  => 'required|in:pending,under_review,resolved,rejected',
-            'remarks' => 'nullable|string|max:1000',
-        ]);
+{
+    $request->validate([
+        'status'          => 'required|in:pending,for_review,approved,rejected,scheduled,ongoing,resolved,escalated,closed',
+        'remarks'         => 'nullable|string|max:1000',
+        'hearing_date'    => 'nullable|date',
+        'hearing_time'    => 'nullable',
+        'punong_barangay' => 'nullable|string|max:255',
+    ]);
 
-        $complaint->update([
-            'status'  => $request->status,
-            'remarks' => $request->remarks,
-        ]);
+    $complaint->update([
+        'status'          => $request->status,
+        'remarks'         => $request->remarks,
+        'hearing_date'    => $request->hearing_date,
+        'hearing_time'    => $request->hearing_time,
+        'punong_barangay' => $request->punong_barangay,
+    ]);
 
-        return back()->with('success', 'Complaint '.$complaint->reference_number.' updated successfully.');
-    }
-
+    return back()->with('success', 'Complaint ' . $complaint->reference_number . ' updated to ' . strtoupper($request->status) . '.');
+}
     // Manage Users
     public function users(Request $request)
     {
@@ -141,7 +146,7 @@ class AdminController extends Controller
         $stats = [
             'total'    => Complaint::count(),
             'pending'  => Complaint::where('status','pending')->count(),
-            'review'   => Complaint::where('status','under_review')->count(),
+            'review' => Complaint::where('status','for_review')->count(),
             'resolved' => Complaint::where('status','resolved')->count(),
             'rejected' => Complaint::where('status','rejected')->count(),
         ];

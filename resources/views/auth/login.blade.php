@@ -102,12 +102,7 @@
             style="padding:9px 22px;border-radius:99px;font-size:14px;font-weight:600;cursor:pointer;border:1.5px solid #1a5fd4;background:linear-gradient(135deg,#1a5fd4,#1247b8);color:#fff;font-family:Inter,sans-serif;box-shadow:0 4px 14px rgba(26,95,212,.3);transition:all .2s;">
             Resident
         </button>
-        <button type="button"
-            id="pill-staff"
-            onclick="selectRole('staff','staff@test.com')"
-            style="padding:9px 22px;border-radius:99px;font-size:14px;font-weight:600;cursor:pointer;border:1.5px solid #d4daea;background:#f5f6fa;color:#a0aab8;font-family:Inter,sans-serif;transition:all .2s;">
-            Staff
-        </button>
+       
         <button type="button"
             id="pill-admin"
             onclick="selectRole('admin','admin@test.com')"
@@ -119,7 +114,7 @@
     <script>
     function selectRole(role, email) {
         // Reset all pills
-        ['resident','staff','admin'].forEach(r => {
+        ['resident','admin'].forEach(r => {
             const btn = document.getElementById('pill-' + r);
             btn.style.background = '#f5f6fa';
             btn.style.color = '#a0aab8';

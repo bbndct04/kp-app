@@ -1,0 +1,62 @@
+{
+    "name": "BlotterLink — Barangay New Kababae",
+    "short_name": "BlotterLink",
+    "description": "Official Barangay Complaint & Incident Reporting System of Barangay New Kababae, Olongapo City",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#1e2d5e",
+    "theme_color": "#1e2d5e",
+    "orientation": "portrait-primary",
+    "scope": "/",
+    "lang": "en",
+    "categories": ["government", "utilities"],
+    "icons": [
+        {
+            "src": "/images/blotterlink-logo.png",
+            "sizes": "72x72",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/blotterlink-logo.png",
+            "sizes": "96x96",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/blotterlink-logo.png",
+            "sizes": "128x128",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/blotterlink-logo.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/blotterlink-logo.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "screenshots": [],
+    "shortcuts": [
+        {
+            "name": "File a Complaint",
+            "short_name": "File",
+            "description": "Submit a new complaint",
+            "url": "/complaints/create",
+            "icons": [{ "src": "/images/blotterlink-logo.png", "sizes": "96x96" }]
+        },
+        {
+            "name": "Track Status",
+            "short_name": "Track",
+            "description": "Track your complaint status",
+            "url": "/track",
+            "icons": [{ "src": "/images/blotterlink-logo.png", "sizes": "96x96" }]
+        }
+    ]
+}
