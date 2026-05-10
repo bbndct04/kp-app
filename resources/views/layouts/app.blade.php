@@ -46,7 +46,7 @@
             </div>
             {{-- Close button (mobile only) --}}
             <button onclick="closeSidebar()"
-                style="display:none;background:none;border:none;color:rgba(255,255,255,.5);cursor:pointer;padding:4px;border-radius:6px;font-size:18px;line-height:1;"
+                style="background:none;border:none;color:rgba(255,255,255,.5);cursor:pointer;padding:4px;border-radius:6px;font-size:18px;line-height:1;"
                 id="sidebar-close">✕</button>
         </div>
 
@@ -131,7 +131,7 @@
         <header class="topbar">
 
             {{-- Hamburger (mobile) --}}
-            <button class="hamburger" id="hamburger" onclick="openSidebar()" style="display:none;">
+            <button class="hamburger" id="hamburger" onclick="openSidebar()">
                 <span></span>
                 <span></span>
                 <span></span>

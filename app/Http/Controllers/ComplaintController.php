@@ -16,11 +16,24 @@ class ComplaintController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'category'      => 'required|string',
-            'description'   => 'required|string|min:20',
-            'incident_date' => 'required|date',
-            'incident_time' => 'required',
-            'location'      => 'required|string',
+            // Section 1 - Complainant
+            'complainant_formal_name' => 'required|string|max:255',
+            'complainant_contact'     => 'required|string|max:20',
+            'complainant_address'     => 'required|string|max:500',
+
+            // Section 2 - Respondent
+            'respondent_name'         => 'required|string|max:255',
+            'respondent_address'      => 'required|string|max:500',
+
+            // Section 3 - Incident
+            'category'                => 'required|string',
+            'other_category'          => 'nullable|string|max:255|required_if:category,Other',
+            'incident_date'           => 'required|date|before_or_equal:today',
+            'incident_time'           => 'required',
+            'location'                => 'required|string|max:500',
+            'description'             => 'required|string|min:20',
+            'relief_requested'        => 'required|string|min:5',
+            'attachment'              => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:10240',
         ]);
 
         // Generate reference number
@@ -39,21 +52,30 @@ class ComplaintController extends Controller
         }
 
         Complaint::create([
-            'user_id'          => auth()->id(),
-            'reference_number' => $refNo,
-            'case_number'      => $caseNo,
-            'category'         => $request->category,
-            'description'      => $request->description,
-            'incident_date'    => $request->incident_date,
-            'incident_time'    => $request->incident_time,
-            'location'         => $request->location,
-            'persons_involved' => $request->persons_involved,
-            'attachment'       => $attachmentPath,
-            'status'           => 'pending',
-            'complainant_formal_name' => auth()->user()->name,
+            'user_id'                 => auth()->id(),
+            'reference_number'        => $refNo,
+            'case_number'             => $caseNo,
+            'category'                => $request->category === 'Other'
+                                            ? $request->other_category
+                                            : $request->category,
+            'other_category'          => $request->other_category,
+            'complainant_formal_name' => $request->complainant_formal_name,
+            'complainant_contact'     => $request->complainant_contact,
+            'complainant_address'     => $request->complainant_address,
+            'respondent_name'         => $request->respondent_name,
+            'respondent_address'      => $request->respondent_address,
+            'description'             => $request->description,
+            'incident_date'           => $request->incident_date,
+            'incident_time'           => $request->incident_time,
+            'location'                => $request->location,
+            'relief_requested'        => $request->relief_requested,
+            'attachment'              => $attachmentPath,
+            'status'                  => 'pending',
         ]);
 
-        return redirect()->route('my-reports')
-            ->with('success', 'Complaint submitted! Reference: ' . $refNo);
+        // ✅ Redirect back to create page with correct session key
+        // so the 24-hour popup modal triggers properly
+        return redirect()->route('complaints.create')
+            ->with('complaint_submitted', $refNo);
     }
 }

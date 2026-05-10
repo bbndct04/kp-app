@@ -10,19 +10,21 @@ class Complaint extends Model
     use HasFactory;
 
     protected $fillable = [
-         'user_id',
+    'user_id',
     'reference_number',
     'case_number',
     'case_level',
     'category',
+    'other_category',        // ← NEW
     'description',
     'incident_date',
     'incident_time',
     'location',
-    'persons_involved',
+    'complainant_formal_name',
+    'complainant_contact',   // ← NEW
+    'complainant_address',   // ← NEW
     'respondent_name',
     'respondent_address',
-    'complainant_formal_name',
     'relief_requested',
     'attachment',
     'status',
