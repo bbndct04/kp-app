@@ -7,7 +7,7 @@
             Welcome back
         </h2>
         <p style="font-size:14.5px;color:#5e6882;">
-            Sign in to your BlotterLink account
+            Sign in to your Katarungang Pambarangay App account
         </p>
     </div>
 
@@ -102,7 +102,6 @@
             style="padding:9px 22px;border-radius:99px;font-size:14px;font-weight:600;cursor:pointer;border:1.5px solid #1a5fd4;background:linear-gradient(135deg,#1a5fd4,#1247b8);color:#fff;font-family:Inter,sans-serif;box-shadow:0 4px 14px rgba(26,95,212,.3);transition:all .2s;">
             Resident
         </button>
-       
         <button type="button"
             id="pill-admin"
             onclick="selectRole('admin','admin@test.com')"
@@ -113,7 +112,6 @@
 
     <script>
     function selectRole(role, email) {
-        // Reset all pills
         ['resident','admin'].forEach(r => {
             const btn = document.getElementById('pill-' + r);
             btn.style.background = '#f5f6fa';
@@ -121,13 +119,11 @@
             btn.style.borderColor = '#d4daea';
             btn.style.boxShadow = 'none';
         });
-        // Activate selected pill
         const active = document.getElementById('pill-' + role);
         active.style.background = 'linear-gradient(135deg, #1a5fd4, #1247b8)';
         active.style.color = '#fff';
         active.style.borderColor = '#1a5fd4';
         active.style.boxShadow = '0 4px 14px rgba(26,95,212,.3)';
-        // Fill email
         document.getElementById('email').value = email;
         document.getElementById('password').value = '123456';
     }

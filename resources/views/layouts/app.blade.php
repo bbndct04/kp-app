@@ -7,10 +7,11 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="BlotterLink">
-    <meta name="application-name" content="BlotterLink">
+    {{-- ✅ Updated PWA meta --}}
+    <meta name="apple-mobile-web-app-title" content="KP App">
+    <meta name="application-name" content="KP App">
     <meta name="msapplication-TileColor" content="#1e2d5e">
-    <meta name="description" content="Barangay New Kababae Official Complaint & Incident Reporting System">
+    <meta name="description" content="Katarungang Pambarangay App — Barangay New Kababae Official Complaint & Incident Reporting System">
 
     {{-- PWA Manifest --}}
     <link rel="manifest" href="/manifest.json">
@@ -19,7 +20,8 @@
     <link rel="apple-touch-icon" href="{{ asset('images/blotterlink-logo.png') }}">
     <link rel="icon" type="image/png" href="{{ asset('images/blotterlink-logo.png') }}">
 
-    <title>BlotterLink — {{ $title ?? 'Dashboard' }}</title>
+    {{-- ✅ Updated title --}}
+    <title>KP App — {{ $title ?? 'Dashboard' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body style="background:#f5f7fa;font-family:Inter,sans-serif;">
@@ -42,11 +44,12 @@
         {{-- Logo --}}
         <div style="padding:16px 18px 14px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:12px;">
             <div style="width:36px;height:36px;border-radius:50%;overflow:hidden;border:2px solid rgba(255,255,255,.25);flex-shrink:0;">
-                <img src="{{ asset('images/blotterlink-logo.png') }}" alt="BlotterLink"
+                <img src="{{ asset('images/blotterlink-logo.png') }}" alt="KP App"
                     style="width:100%;height:100%;object-fit:cover;display:block;">
             </div>
             <div style="flex:1;">
-                <div style="color:#fff;font-size:14px;font-weight:700;">BlotterLink</div>
+                {{-- ✅ Sidebar shows KP App only --}}
+                <div style="color:#fff;font-size:14px;font-weight:700;">KP App</div>
                 <div style="color:rgba(255,255,255,.4);font-size:10px;letter-spacing:.5px;text-transform:uppercase;">Brgy. New Kababae</div>
             </div>
             {{-- Close button (mobile only) --}}
@@ -77,7 +80,7 @@
                     Track Status
                 </a>
 
-                {{-- ✅ Notifications (resident only) --}}
+                {{-- Notifications (resident only) --}}
                 <a href="{{ route('notifications') }}" class="nav-item {{ request()->routeIs('notifications') ? 'active' : '' }}" onclick="closeSidebar()"
                     style="display:flex;align-items:center;gap:10px;">
                     <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
@@ -168,7 +171,7 @@
                     style="border:none;background:none;font-size:13px;color:#1e2d5e;outline:none;width:100%;font-family:Inter,sans-serif;">
             </div>
 
-            {{-- ✅ Bell — clickable, shows unread count for residents --}}
+            {{-- Bell --}}
             @if($role === 'resident')
             <a href="{{ route('notifications') }}"
                 class="topbar-bell"
@@ -186,7 +189,6 @@
                 @endif
             </a>
             @else
-            {{-- Admin bell (no notifications) --}}
             <div class="topbar-bell" style="width:38px;height:38px;border-radius:8px;background:#f5f7fa;border:1.5px solid #e5e9f0;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;flex-shrink:0;">
                 <svg width="17" height="17" fill="none" stroke="#64748b" stroke-width="1.8" viewBox="0 0 24 24">
                     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
@@ -215,7 +217,6 @@
 </div>
 
 <script>
-// ─── Mobile Sidebar Toggle ───
 function openSidebar() {
     document.getElementById('sidebar').classList.add('open');
     document.getElementById('sidebar-overlay').classList.add('active');
@@ -230,7 +231,6 @@ function closeSidebar() {
     document.body.style.overflow = '';
 }
 
-// ─── PWA Service Worker ───
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')
@@ -239,7 +239,6 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-// ─── PWA Install Prompt ───
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
@@ -254,7 +253,8 @@ function showInstallBanner() {
         <div style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1e2d5e;color:#fff;border-radius:12px;padding:14px 20px;display:flex;align-items:center;gap:14px;z-index:9999;box-shadow:0 8px 30px rgba(0,0,0,.3);max-width:340px;width:calc(100% - 40px);">
             <img src="{{ asset('images/blotterlink-logo.png') }}" style="width:36px;height:36px;border-radius:50%;">
             <div style="flex:1;">
-                <div style="font-size:13px;font-weight:700;">Install BlotterLink</div>
+                {{-- ✅ Updated PWA banner text --}}
+                <div style="font-size:13px;font-weight:700;">Install KP App</div>
                 <div style="font-size:12px;color:rgba(255,255,255,.6);">Add to Home Screen for quick access</div>
             </div>
             <div style="display:flex;gap:8px;">

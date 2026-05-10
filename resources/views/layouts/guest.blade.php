@@ -3,7 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>BlotterLink — {{ $title ?? 'Welcome' }}</title>
+    {{-- ✅ Updated title --}}
+    <title>KP App — {{ $title ?? 'Welcome' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         @keyframes bounceA {
@@ -37,7 +38,7 @@
             <div style="display:flex;align-items:center;justify-content:center;gap:22px;margin-bottom:28px;">
                 <div class="logo-a"
                     style="width:86px;height:86px;border-radius:50%;overflow:hidden;border:3px solid rgba(255,255,255,.3);flex-shrink:0;">
-                    <img src="{{ asset('images/blotterlink-logo.png') }}" alt="BlotterLink"
+                    <img src="{{ asset('images/blotterlink-logo.png') }}" alt="KP App"
                         style="width:100%;height:100%;object-fit:cover;display:block;">
                 </div>
                 <div style="width:1px;height:56px;background:rgba(255,255,255,.2);flex-shrink:0;"></div>
@@ -48,12 +49,13 @@
                 </div>
             </div>
 
-            <h1 style="font-size:28px;font-weight:700;color:#fff;letter-spacing:-.5px;margin-bottom:6px;">
-                BlotterLink
+            {{-- ✅ Updated system name --}}
+            <h1 style="font-size:22px;font-weight:700;color:#fff;letter-spacing:-.5px;margin-bottom:6px;">
+                Katarungang Pambarangay App
             </h1>
             <div style="width:36px;height:2px;background:rgba(255,255,255,.4);margin:0 auto 12px;border-radius:99px;"></div>
             <p style="font-size:14px;color:rgba(255,255,255,.6);line-height:1.65;max-width:260px;margin:0 auto 32px;">
-                Barangay New Kababae<br>Complaint & Incident Reporting System
+                Barangay New Kababae<br>Olongapo City, Zambales
             </p>
 
             {{-- Feature list --}}

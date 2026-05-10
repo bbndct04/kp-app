@@ -1,7 +1,7 @@
 {
-    "name": "BlotterLink — Barangay New Kababae",
-    "short_name": "BlotterLink",
-    "description": "Official Barangay Complaint & Incident Reporting System of Barangay New Kababae, Olongapo City",
+    "name": "Katarungang Pambarangay App — Barangay New Kababae",
+    "short_name": "KP App",
+    "description": "Official Katarungang Pambarangay App of Barangay New Kababae, Olongapo City",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#1e2d5e",

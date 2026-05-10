@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>BlotterLink — Barangay New Kababae</title>
+    <title>KP App — Barangay New Kababae</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
@@ -43,8 +43,6 @@
         .stat-item { text-align: center; }
         .stat-val { font-size: 28px; font-weight: 800; color: #fff; letter-spacing: -1px; }
         .stat-label { font-size: 12px; color: rgba(255,255,255,.5); margin-top: 2px; }
- 
-        /* Features Section */
         .features-section { background: #fff; padding: 80px 60px; }
         .section-tag { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #3554a0; margin-bottom: 10px; }
         .section-title { font-size: 32px; font-weight: 800; color: #1e2d5e; letter-spacing: -1px; margin-bottom: 14px; }
@@ -55,8 +53,6 @@
         .feature-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 14px; }
         .feature-title { font-size: 15px; font-weight: 700; color: #1e2d5e; margin-bottom: 6px; }
         .feature-desc { font-size: 13px; color: #64748b; line-height: 1.6; }
- 
-        /* Process Section */
         .process-section { background: #f5f7fa; padding: 80px 60px; }
         .process-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 48px; position: relative; }
         .process-step { text-align: center; position: relative; }
@@ -64,8 +60,6 @@
         .step-title { font-size: 14px; font-weight: 700; color: #1e2d5e; margin-bottom: 6px; }
         .step-desc { font-size: 13px; color: #64748b; line-height: 1.5; }
         .step-connector { position: absolute; top: 24px; left: calc(50% + 28px); right: calc(-50% + 28px); height: 2px; background: #d1d9e6; }
- 
-        /* Footer */
         .footer { background: #0f1b3d; padding: 40px 60px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
         .footer-left { color: rgba(255,255,255,.5); font-size: 13px; }
         .footer-right { display: flex; gap: 20px; }
@@ -74,15 +68,16 @@
     </style>
 </head>
 <body>
- 
+
 {{-- NAVBAR --}}
 <div class="hero">
     <nav class="nav">
         <div class="nav-logo">
-            <img src="{{ asset('images/blotterlink-logo.png') }}" alt="BlotterLink">
+            <img src="{{ asset('images/blotterlink-logo.png') }}" alt="KP App">
             <div>
-                <div class="nav-title">BlotterLink</div>
-                <div class="nav-sub">Brgy. New Kababae</div>
+                {{-- ✅ Full name in navbar --}}
+                <div class="nav-title">Katarungang Pambarangay App</div>
+                <div class="nav-sub">Brgy. New Kababae, Olongapo City</div>
             </div>
         </div>
         <div class="nav-actions">
@@ -94,7 +89,7 @@
             @endauth
         </div>
     </nav>
- 
+
     {{-- HERO --}}
     <div class="hero-body">
         <div class="hero-left">
@@ -107,9 +102,9 @@
                 in Real Time
             </h1>
             <p class="hero-desc">
-                BlotterLink is the official online complaint and incident reporting system
-                of Barangay New Kababae. File your complaint anytime, anywhere — and track
-                its status through the full Katarungang Pambarangay process.
+                The <strong style="color:#fff;">Katarungang Pambarangay App</strong> is the official online
+                complaint and incident reporting system of Barangay New Kababae. File your complaint
+                anytime, anywhere — and track its status through the full Katarungang Pambarangay process.
             </p>
             <div class="hero-cta">
                 <a href="{{ route('register') }}" class="btn-hero-primary">
@@ -136,12 +131,13 @@
                 @endforeach
             </div>
         </div>
- 
+
         {{-- QR CODE --}}
         <div class="hero-right">
             <div class="qr-card">
                 <div class="qr-title">Scan to Access</div>
-                <div class="qr-sub">BlotterLink System</div>
+                {{-- ✅ Updated QR subtitle --}}
+                <div class="qr-sub">Katarungang Pambarangay App</div>
                 <div id="qrcode" style="display:flex;justify-content:center;"></div>
                 <div class="qr-instruction">
                     📱 Scan this QR code with your<br>phone camera to access the system
@@ -164,22 +160,23 @@
         </div>
     </div>
 </div>
- 
+
 {{-- FEATURES --}}
 <div class="features-section">
     <div style="max-width:1100px;margin:0 auto;">
         <div class="section-tag">Features</div>
         <h2 class="section-title">Everything you need in one place</h2>
-        <p class="section-desc">BlotterLink brings the entire barangay complaint process online — from filing to resolution.</p>
- 
+        {{-- ✅ Updated description --}}
+        <p class="section-desc">The Katarungang Pambarangay App brings the entire barangay complaint process online — from filing to resolution.</p>
+
         <div class="features-grid">
             @foreach([
                 ['icon'=>'📥','bg'=>'#e8eef8','title'=>'Online Filing','desc'=>'Submit complaints anytime without visiting the barangay office. Just fill the form online.'],
                 ['icon'=>'🔍','bg'=>'#e0f2fe','title'=>'Real-time Tracking','desc'=>'Track your complaint status using your reference number. Know exactly where your case is.'],
                 ['icon'=>'📅','bg'=>'#ede9fe','title'=>'Hearing Scheduler','desc'=>'Get notified automatically when your mediation hearing is scheduled by the admin.'],
-                ['icon'=>'📄','bg'=>'#d1fae5','title'=>'KP Forms Generated','desc'=>'Official KP Forms #7, #8, #9, and #16 are automatically generated and printable.'],
-                ['icon'=>'🤝','bg'=>'#fef3c7','title'=>'Mediation Recording','desc'=>'Staff records mediation proceedings, outcomes, and settlement details digitally.'],
-                ['icon'=>'🔒','bg'=>'#fee2e2','title'=>'Secure & Verified','desc'=>'Accounts are verified with ID validation to ensure authentic complaint submissions.'],
+                ['icon'=>'📄','bg'=>'#d1fae5','title'=>'KP Forms Generated','desc'=>'Official KP Forms are automatically generated and printable for each stage of the process.'],
+                ['icon'=>'🤝','bg'=>'#fef3c7','title'=>'Mediation Recording','desc'=>'Admin records mediation proceedings, outcomes, and settlement details digitally.'],
+                ['icon'=>'🔒','bg'=>'#fee2e2','title'=>'Secure & Verified','desc'=>'Accounts are verified to ensure authentic complaint submissions from barangay residents.'],
             ] as $f)
             <div class="feature-card">
                 <div class="feature-icon" style="background:{{ $f['bg'] }};">{{ $f['icon'] }}</div>
@@ -190,19 +187,19 @@
         </div>
     </div>
 </div>
- 
+
 {{-- PROCESS --}}
 <div class="process-section">
     <div style="max-width:1100px;margin:0 auto;">
         <div class="section-tag">How It Works</div>
         <h2 class="section-title">Simple 4-Step Process</h2>
         <p class="section-desc">Follow the Katarungang Pambarangay process digitally.</p>
- 
+
         <div class="process-steps">
             @php
                 $steps = [
                     ['n'=>'1','title'=>'File Complaint','desc'=>'Register and submit your complaint online with all necessary details.'],
-                    ['n'=>'2','title'=>'Staff Review','desc'=>'Barangay staff validates and encodes respondent details for admin review.'],
+                    ['n'=>'2','title'=>'Admin Review','desc'=>'Barangay admin validates and processes the complaint for mediation.'],
                     ['n'=>'3','title'=>'Mediation','desc'=>'Admin schedules a hearing. Both parties attend mediation proceedings.'],
                     ['n'=>'4','title'=>'Resolution','desc'=>'Case is settled with an official amicable settlement or escalated if needed.'],
                 ];
@@ -220,20 +217,20 @@
         </div>
     </div>
 </div>
- 
+
 {{-- FOOTER --}}
 <footer class="footer">
+    {{-- ✅ Updated footer --}}
     <div class="footer-left">
-        © {{ date('Y') }} BlotterLink — Barangay New Kababae, Olongapo City, Zambales. All rights reserved.
+        © {{ date('Y') }} Katarungang Pambarangay App — Barangay New Kababae, Olongapo City, Zambales. All rights reserved.
     </div>
     <div class="footer-right">
         <a href="{{ route('login') }}" class="footer-link">Sign In</a>
         <a href="{{ route('register') }}" class="footer-link">Register</a>
     </div>
 </footer>
- 
+
 <script>
-    // Generate QR code pointing to the login page
     var qr = new QRCode(document.getElementById("qrcode"), {
         text: "{{ url('/login') }}",
         width: 180,
@@ -243,7 +240,6 @@
         correctLevel: QRCode.CorrectLevel.H
     });
 </script>
- 
+
 </body>
 </html>
- 
