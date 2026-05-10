@@ -16,20 +16,20 @@ Route::get('/dashboard', function () {
     $user = auth()->user();
     $role = $user->getRoleNames()->first();
 
-    if (in_array($role, ['admin', 'staff'])) {
+    if (in_array($role, ['admin'])) {
         return redirect()->route('admin.dashboard');
     }
 
     $complaints = \App\Models\Complaint::where('user_id', $user->id)->get();
     $stats = [
         'total'      => $complaints->count(),
-        'pending'    => $complaints->where('status','pending')->count(),
-        'inprogress' => $complaints->whereIn('status',['for_review','approved','scheduled','ongoing'])->count(),
-        'resolved'   => $complaints->where('status','resolved')->count(),
+        'pending'    => $complaints->where('status', 'pending')->count(),
+        'inprogress' => $complaints->whereIn('status', ['for_review', 'approved', 'scheduled', 'ongoing'])->count(),
+        'resolved'   => $complaints->where('status', 'resolved')->count(),
     ];
     $recent = $complaints->sortByDesc('created_at')->take(5);
 
-    return view('dashboard', compact('stats','recent'));
+    return view('dashboard', compact('stats', 'recent'));
 })->middleware(['auth'])->name('dashboard');
 
 // ─── Resident Routes ───
@@ -41,7 +41,7 @@ Route::post('/complaints', [App\Http\Controllers\ComplaintController::class, 'st
 
 Route::get('/my-reports', function () {
     $complaints = \App\Models\Complaint::where('user_id', auth()->id())
-        ->orderBy('created_at','desc')->get();
+        ->orderBy('created_at', 'desc')->get();
     return view('resident.my-reports', compact('complaints'));
 })->middleware(['auth'])->name('my-reports');
 
@@ -57,16 +57,13 @@ Route::patch('/profile/update', function (\Illuminate\Http\Request $request) {
     $user = auth()->user();
     $request->validate([
         'name'  => 'required|string|max:255',
-        'email' => 'required|email|unique:users,email,'.$user->id,
+        'email' => 'required|email|unique:users,email,' . $user->id,
     ]);
     $user->update(['name' => $request->name, 'email' => $request->email]);
     return back()->with('success', 'Profile updated successfully!');
 })->middleware(['auth'])->name('profile.update');
 
-// ─── ID Scan API ───
-Route::post('/api/scan-id', [App\Http\Controllers\IDVerificationController::class, 'scan']);
-
-// ─── Admin + Staff Routes (both roles merged) ───
+// ─── Admin Routes ───
 Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () {
 
     Route::get('/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])
@@ -74,6 +71,9 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
 
     Route::get('/complaints', [App\Http\Controllers\AdminController::class, 'complaints'])
         ->name('complaints');
+
+    Route::get('/complaints/{complaint}', [App\Http\Controllers\AdminController::class, 'show'])
+        ->name('complaints.show');
 
     Route::post('/complaints/{complaint}/status', [App\Http\Controllers\AdminController::class, 'updateStatus'])
         ->name('complaints.status');
@@ -92,25 +92,6 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
 
     Route::get('/analytics', [App\Http\Controllers\AdminController::class, 'analytics'])
         ->name('analytics');
-});
-
-// ─── Staff Routes (complaint detail + KP forms) ───
-Route::prefix('staff')->middleware(['auth'])->name('staff.')->group(function () {
-
-    Route::get('/complaints/{complaint}', [App\Http\Controllers\StaffController::class, 'show'])
-        ->name('complaints.show');
-
-    Route::post('/complaints/{complaint}/validate', [App\Http\Controllers\StaffController::class, 'validate'])
-        ->name('complaints.validate');
-
-    Route::post('/complaints/{complaint}/mediation', [App\Http\Controllers\StaffController::class, 'mediation'])
-        ->name('complaints.mediation');
-
-    Route::post('/complaints/{complaint}/close', [App\Http\Controllers\StaffController::class, 'close'])
-        ->name('complaints.close');
-
-    Route::get('/complaints/{complaint}/form/{formNumber}', [App\Http\Controllers\StaffController::class, 'generateForm'])
-        ->name('complaints.form');
 });
 
 require __DIR__.'/auth.php';
