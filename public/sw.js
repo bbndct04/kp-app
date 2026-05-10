@@ -1,4 +1,4 @@
-const CACHE_NAME = 'blotterlink-v1';
+const CACHE_NAME = 'kp-app-v1';
 const STATIC_ASSETS = [
     '/',
     '/login',
