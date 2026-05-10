@@ -24,7 +24,12 @@
 </head>
 <body style="background:#f5f7fa;font-family:Inter,sans-serif;">
 
-@php $role = auth()->user()->getRoleNames()->first() ?? 'resident'; @endphp
+@php
+    $role = auth()->user()->getRoleNames()->first() ?? 'resident';
+    $unreadCount = $role === 'resident'
+        ? \App\Models\ComplaintNotification::where('user_id', auth()->id())->where('is_read', false)->count()
+        : 0;
+@endphp
 
 {{-- Sidebar Overlay (mobile) --}}
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
@@ -72,12 +77,24 @@
                     Track Status
                 </a>
 
-            @elseif(in_array($role, ['admin', 'staff']))
+                {{-- ✅ Notifications (resident only) --}}
+                <a href="{{ route('notifications') }}" class="nav-item {{ request()->routeIs('notifications') ? 'active' : '' }}" onclick="closeSidebar()"
+                    style="display:flex;align-items:center;gap:10px;">
+                    <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    Notifications
+                    @if($unreadCount > 0)
+                    <span style="margin-left:auto;background:#dc2626;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;min-width:18px;text-align:center;">
+                        {{ $unreadCount > 9 ? '9+' : $unreadCount }}
+                    </span>
+                    @endif
+                </a>
+
+            @elseif(in_array($role, ['admin']))
                 <a href="{{ route('admin.dashboard') }}" class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" onclick="closeSidebar()">
                     <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                     Dashboard
                 </a>
-                <a href="{{ route('admin.complaints') }}" class="nav-item {{ request()->routeIs('admin.complaints') || request()->routeIs('staff.complaints.*') ? 'active' : '' }}" onclick="closeSidebar()">
+                <a href="{{ route('admin.complaints') }}" class="nav-item {{ request()->routeIs('admin.complaints') || request()->routeIs('admin.complaints.*') ? 'active' : '' }}" onclick="closeSidebar()">
                     <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                     All Complaints
                 </a>
@@ -151,11 +168,32 @@
                     style="border:none;background:none;font-size:13px;color:#1e2d5e;outline:none;width:100%;font-family:Inter,sans-serif;">
             </div>
 
-            {{-- Bell (hidden on mobile) --}}
-            <div class="topbar-bell" style="width:38px;height:38px;border-radius:8px;background:#f5f7fa;border:1.5px solid #e5e9f0;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;">
-                <svg width="17" height="17" fill="none" stroke="#64748b" stroke-width="1.8" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            {{-- ✅ Bell — clickable, shows unread count for residents --}}
+            @if($role === 'resident')
+            <a href="{{ route('notifications') }}"
+                class="topbar-bell"
+                style="width:38px;height:38px;border-radius:8px;background:#f5f7fa;border:1.5px solid #e5e9f0;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;text-decoration:none;flex-shrink:0;">
+                <svg width="17" height="17" fill="none" stroke="#64748b" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+                @if($unreadCount > 0)
+                <div style="position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;background:#dc2626;border-radius:99px;border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;padding:0 3px;">
+                    {{ $unreadCount > 9 ? '9+' : $unreadCount }}
+                </div>
+                @else
                 <div style="position:absolute;top:7px;right:7px;width:7px;height:7px;background:#3554a0;border-radius:50%;border:1.5px solid #fff;"></div>
+                @endif
+            </a>
+            @else
+            {{-- Admin bell (no notifications) --}}
+            <div class="topbar-bell" style="width:38px;height:38px;border-radius:8px;background:#f5f7fa;border:1.5px solid #e5e9f0;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;flex-shrink:0;">
+                <svg width="17" height="17" fill="none" stroke="#64748b" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
             </div>
+            @endif
 
             {{-- User --}}
             <div style="display:flex;align-items:center;gap:10px;padding:5px 10px 5px 5px;border-radius:10px;">

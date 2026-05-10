@@ -63,6 +63,16 @@ Route::patch('/profile/update', function (\Illuminate\Http\Request $request) {
     return back()->with('success', 'Profile updated successfully!');
 })->middleware(['auth'])->name('profile.update');
 
+// ─── Notifications (Resident) ─── ✅ MOVED OUTSIDE admin group
+Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])
+    ->middleware(['auth'])->name('notifications');
+
+Route::patch('/notifications/{notification}/read', [App\Http\Controllers\NotificationController::class, 'markRead'])
+    ->middleware(['auth'])->name('notifications.read');
+
+Route::get('/notifications/unread-count', [App\Http\Controllers\NotificationController::class, 'unreadCount'])
+    ->middleware(['auth'])->name('notifications.count');
+
 // ─── Admin Routes ───
 Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () {
 
@@ -92,6 +102,23 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
 
     Route::get('/analytics', [App\Http\Controllers\AdminController::class, 'analytics'])
         ->name('analytics');
+
+    // ─── PDF Form Generation ───
+    Route::get('/complaints/{complaint}/form/7',  [App\Http\Controllers\AdminController::class, 'formComplainant'])->name('complaints.form7');
+    Route::get('/complaints/{complaint}/form/8',  [App\Http\Controllers\AdminController::class, 'formNoticeHearing'])->name('complaints.form8');
+    Route::get('/complaints/{complaint}/form/9',  [App\Http\Controllers\AdminController::class, 'formSummons'])->name('complaints.form9');
+    Route::get('/complaints/{complaint}/form/16', [App\Http\Controllers\AdminController::class, 'formSettlement'])->name('complaints.form16');
+    Route::get('/complaints/{complaint}/form/22', [App\Http\Controllers\AdminController::class, 'formCFA'])->name('complaints.form22');
+    Route::get('/complaints/{complaint}/form/10', [App\Http\Controllers\AdminController::class, 'formPangkat'])->name('complaints.form10');
+    Route::get('/complaints/{complaint}/form/11', [App\Http\Controllers\AdminController::class, 'formPangkatMember'])->name('complaints.form11');
+    Route::get('/complaints/{complaint}/form/13', [App\Http\Controllers\AdminController::class, 'formSubpoena'])->name('complaints.form13');
+    Route::get('/complaints/{complaint}/form/14', [App\Http\Controllers\AdminController::class, 'formArbitration'])->name('complaints.form14');
+    Route::get('/complaints/{complaint}/form/15', [App\Http\Controllers\AdminController::class, 'formArbitrationAward'])->name('complaints.form15');
+    Route::get('/complaints/{complaint}/form/18', [App\Http\Controllers\AdminController::class, 'formNoticeComplainant'])->name('complaints.form18');
+    Route::get('/complaints/{complaint}/form/19', [App\Http\Controllers\AdminController::class, 'formNoticeRespondent'])->name('complaints.form19');
+    Route::get('/complaints/{complaint}/form/20', [App\Http\Controllers\AdminController::class, 'formCFALupon'])->name('complaints.form20');
+    Route::get('/complaints/{complaint}/form/25', [App\Http\Controllers\AdminController::class, 'formMotionExecution'])->name('complaints.form25');
+    Route::get('/complaints/{complaint}/form/27', [App\Http\Controllers\AdminController::class, 'formNoticeExecution'])->name('complaints.form27');
 });
 
 require __DIR__.'/auth.php';

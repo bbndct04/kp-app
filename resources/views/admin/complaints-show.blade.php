@@ -90,7 +90,6 @@
 
         {{-- Complainant + Respondent --}}
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;" class="form-grid-2">
-
             <div class="card" style="padding:20px;">
                 <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#3554a0;background:#e8eef8;padding:8px 12px;border-radius:6px;margin-bottom:16px;">
                     👤 Complainant
@@ -183,6 +182,98 @@
         </div>
         @endif
 
+        {{-- PDF Documents --}}
+<div class="card" style="padding:20px;margin-bottom:20px;">
+    <div style="font-size:13px;font-weight:700;color:#1e2d5e;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+        <svg width="16" height="16" fill="none" stroke="#1e2d5e" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Generate KP Documents
+    </div>
+
+    {{-- Batch 1: Filing & Hearing --}}
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#94a3b8;margin-bottom:8px;">Filing & Hearing</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:16px;">
+        <a href="{{ route('admin.complaints.form7', $complaint) }}" target="_blank"
+            style="display:flex;align-items:center;gap:8px;padding:11px 14px;background:#e8eef8;border:1.5px solid #c5d5f0;border-radius:8px;text-decoration:none;color:#1e2d5e;font-size:12.5px;font-weight:600;">
+            📋 Form 7 — Complainant's Form
+        </a>
+        <a href="{{ route('admin.complaints.form8', $complaint) }}" target="_blank"
+            style="display:flex;align-items:center;gap:8px;padding:11px 14px;background:#e8eef8;border:1.5px solid #c5d5f0;border-radius:8px;text-decoration:none;color:#1e2d5e;font-size:12.5px;font-weight:600;">
+            📋 Form 8 — Notice of Hearing
+        </a>
+        <a href="{{ route('admin.complaints.form9', $complaint) }}" target="_blank"
+            style="display:flex;align-items:center;gap:8px;padding:11px 14px;background:#e8eef8;border:1.5px solid #c5d5f0;border-radius:8px;text-decoration:none;color:#1e2d5e;font-size:12.5px;font-weight:600;">
+            📋 Form 9 — Summons
+        </a>
+        <a href="{{ route('admin.complaints.form13', $complaint) }}" target="_blank"
+            style="display:flex;align-items:center;gap:8px;padding:11px 14px;background:#e8eef8;border:1.5px solid #c5d5f0;border-radius:8px;text-decoration:none;color:#1e2d5e;font-size:12.5px;font-weight:600;">
+            📋 Form 13 — Subpoena
+        </a>
+    </div>
+
+    {{-- Batch 2: Pangkat --}}
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#94a3b8;margin-bottom:8px;">Pangkat Constitution</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:16px;">
+        <a href="{{ route('admin.complaints.form10', $complaint) }}" target="_blank"
+            style="display:flex;align-items:center;gap:8px;padding:11px 14px;background:#ede9fe;border:1.5px solid #c4b5fd;border-radius:8px;text-decoration:none;color:#5b21b6;font-size:12.5px;font-weight:600;">
+            📋 Form 10 — Constitution of Pangkat
+        </a>
+        <a href="{{ route('admin.complaints.form11', $complaint) }}" target="_blank"
+            style="display:flex;align-items:center;gap:8px;padding:11px 14px;background:#ede9fe;border:1.5px solid #c4b5fd;border-radius:8px;text-decoration:none;color:#5b21b6;font-size:12.5px;font-weight:600;">
+            📋 Form 11 — Notice to Pangkat Member
+        </a>
+    </div>
+
+    {{-- Batch 3: Failure to Appear --}}
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#94a3b8;margin-bottom:8px;">Failure to Appear</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:16px;">
+        <a href="{{ route('admin.complaints.form18', $complaint) }}" target="_blank"
+            style="display:flex;align-items:center;gap:8px;padding:11px 14px;background:#fef3c7;border:1.5px solid #fcd34d;border-radius:8px;text-decoration:none;color:#92400e;font-size:12.5px;font-weight:600;">
+            📋 Form 18 — Notice for Complainant
+        </a>
+        <a href="{{ route('admin.complaints.form19', $complaint) }}" target="_blank"
+            style="display:flex;align-items:center;gap:8px;padding:11px 14px;background:#fef3c7;border:1.5px solid #fcd34d;border-radius:8px;text-decoration:none;color:#92400e;font-size:12.5px;font-weight:600;">
+            📋 Form 19 — Notice for Respondent
+        </a>
+    </div>
+
+    {{-- Batch 4: Arbitration --}}
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#94a3b8;margin-bottom:8px;">Arbitration</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:16px;">
+        <a href="{{ route('admin.complaints.form14', $complaint) }}" target="_blank"
+            style="display:flex;align-items:center;gap:8px;padding:11px 14px;background:#dbeafe;border:1.5px solid #93c5fd;border-radius:8px;text-decoration:none;color:#1e40af;font-size:12.5px;font-weight:600;">
+            📋 Form 14 — Agreement for Arbitration
+        </a>
+        <a href="{{ route('admin.complaints.form15', $complaint) }}" target="_blank"
+            style="display:flex;align-items:center;gap:8px;padding:11px 14px;background:#dbeafe;border:1.5px solid #93c5fd;border-radius:8px;text-decoration:none;color:#1e40af;font-size:12.5px;font-weight:600;">
+            📋 Form 15 — Arbitration Award
+        </a>
+    </div>
+
+    {{-- Batch 5: Settlement & Escalation --}}
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#94a3b8;margin-bottom:8px;">Settlement & Escalation</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+        <a href="{{ route('admin.complaints.form16', $complaint) }}" target="_blank"
+            style="display:flex;align-items:center;gap:8px;padding:11px 14px;background:#d1fae5;border:1.5px solid #6ee7b7;border-radius:8px;text-decoration:none;color:#065f46;font-size:12.5px;font-weight:600;">
+            📋 Form 16 — Amicable Settlement
+        </a>
+        <a href="{{ route('admin.complaints.form20', $complaint) }}" target="_blank"
+            style="display:flex;align-items:center;gap:8px;padding:11px 14px;background:#fee2e2;border:1.5px solid #fca5a5;border-radius:8px;text-decoration:none;color:#991b1b;font-size:12.5px;font-weight:600;">
+            📋 Form 20 — CFA (Lupon Secretary)
+        </a>
+        <a href="{{ route('admin.complaints.form22', $complaint) }}" target="_blank"
+            style="display:flex;align-items:center;gap:8px;padding:11px 14px;background:#fee2e2;border:1.5px solid #fca5a5;border-radius:8px;text-decoration:none;color:#991b1b;font-size:12.5px;font-weight:600;">
+            📋 Form 22 — CFA (Pangkat)
+        </a>
+        <a href="{{ route('admin.complaints.form25', $complaint) }}" target="_blank"
+            style="display:flex;align-items:center;gap:8px;padding:11px 14px;background:#fee2e2;border:1.5px solid #fca5a5;border-radius:8px;text-decoration:none;color:#991b1b;font-size:12.5px;font-weight:600;">
+            📋 Form 25 — Motion for Execution
+        </a>
+        <a href="{{ route('admin.complaints.form27', $complaint) }}" target="_blank"
+            style="display:flex;align-items:center;gap:8px;padding:11px 14px;background:#fee2e2;border:1.5px solid #fca5a5;border-radius:8px;text-decoration:none;color:#991b1b;font-size:12.5px;font-weight:600;">
+            📋 Form 27 — Notice of Execution
+        </a>
+    </div>
+</div>
         {{-- Update Complaint Form --}}
         <div class="card" style="overflow:hidden;">
             <div style="padding:16px 22px 14px;border-bottom:1px solid #f1f5f9;background:#f8fafc;">
@@ -205,9 +296,7 @@
                         @foreach($knownCategories as $cat)
                         <option value="{{ $cat }}" {{ $complaint->category === $cat ? 'selected' : '' }}>{{ $cat }}</option>
                         @endforeach
-                        @if(!in_array($complaint->category, $knownCategories))
-                        <option value="{{ $complaint->category }}" selected>{{ $complaint->category }}</option>
-                        @endif
+                        {{-- ✅ unknown fallback removed --}}
                     </select>
                     <div id="admin-other-box" style="display:{{ $complaint->category === 'Other' ? 'block' : 'none' }};margin-top:8px;">
                         <input type="text" name="custom_category" id="admin-other-input"
