@@ -85,7 +85,7 @@
                             <div style="display:flex;gap:5px;flex-wrap:wrap;">
 
                                 {{-- View Detail --}}
-                                <a href="{{ route('staff.complaints.show', $c) }}"
+                                <a href="{{ route('admin.complaints.show', $c) }}"
                                     style="font-size:12px;font-weight:600;color:#3554a0;text-decoration:none;padding:5px 10px;border-radius:6px;border:1px solid #c5d5f0;background:#e8eef8;">
                                     View
                                 </a>

@@ -14,17 +14,17 @@ class AdminController extends Controller
     {
         $stats = [
             'total'       => Complaint::count(),
-            'pending'     => Complaint::where('status','pending')->count(),
-            'review'      => Complaint::where('status','under_review')->count(),
-            'resolved'    => Complaint::where('status','resolved')->count(),
-            'rejected'    => Complaint::where('status','rejected')->count(),
+            'pending'     => Complaint::where('status', 'pending')->count(),
+            'review'      => Complaint::where('status', 'for_review')->count(), // ✅ fixed from under_review
+            'resolved'    => Complaint::where('status', 'resolved')->count(),
+            'rejected'    => Complaint::where('status', 'rejected')->count(),
             'total_users' => User::count(),
             'residents'   => User::role('resident')->count(),
             'staff'       => User::role('staff')->count(),
         ];
 
         $recent = Complaint::with('user')
-            ->orderBy('created_at','desc')
+            ->orderBy('created_at', 'desc')
             ->take(8)
             ->get();
 
@@ -33,24 +33,24 @@ class AdminController extends Controller
             ->orderByDesc('total')
             ->get();
 
-        return view('admin.dashboard', compact('stats','recent','categories'));
+        return view('admin.dashboard', compact('stats', 'recent', 'categories'));
     }
 
     // All Complaints
     public function complaints(Request $request)
     {
-        $query = Complaint::with('user')->orderBy('created_at','desc');
+        $query = Complaint::with('user')->orderBy('created_at', 'desc');
 
         if ($request->status && $request->status !== 'all') {
             $query->where('status', $request->status);
         }
 
         if ($request->search) {
-            $query->where(function($q) use ($request) {
-                $q->where('reference_number','like','%'.$request->search.'%')
-                  ->orWhere('category','like','%'.$request->search.'%')
+            $query->where(function ($q) use ($request) {
+                $q->where('reference_number', 'like', '%' . $request->search . '%')
+                  ->orWhere('category', 'like', '%' . $request->search . '%')
                   ->orWhereHas('user', fn($u) =>
-                      $u->where('name','like','%'.$request->search.'%')
+                      $u->where('name', 'like', '%' . $request->search . '%')
                   );
             });
         }
@@ -60,40 +60,49 @@ class AdminController extends Controller
         return view('admin.complaints', compact('complaints'));
     }
 
+    // Complaint Detail
+    public function show(Complaint $complaint)
+    {
+        return view('admin.complaints-show', compact('complaint'));
+    }
+
     // Update Complaint Status
     public function updateStatus(Request $request, Complaint $complaint)
-{
-    $request->validate([
-        'status'          => 'required|in:pending,for_review,approved,rejected,scheduled,ongoing,resolved,escalated,closed',
-        'remarks'         => 'nullable|string|max:1000',
-        'hearing_date'    => 'nullable|date',
-        'hearing_time'    => 'nullable',
-        'punong_barangay' => 'nullable|string|max:255',
-    ]);
+    {
+        $request->validate([
+            'status'          => 'required|in:pending,for_review,approved,rejected,scheduled,ongoing,resolved,escalated,closed',
+            'category'        => 'required|string|max:255', // ✅ added
+            'remarks'         => 'nullable|string|max:1000',
+            'hearing_date'    => 'nullable|date',
+            'hearing_time'    => 'nullable',
+            'punong_barangay' => 'nullable|string|max:255',
+        ]);
 
-    $complaint->update([
-        'status'          => $request->status,
-        'remarks'         => $request->remarks,
-        'hearing_date'    => $request->hearing_date,
-        'hearing_time'    => $request->hearing_time,
-        'punong_barangay' => $request->punong_barangay,
-    ]);
+        $complaint->update([
+            'status'          => $request->status,
+            'category'        => $request->category,
+            'remarks'         => $request->remarks,
+            'hearing_date'    => $request->hearing_date,
+            'hearing_time'    => $request->hearing_time,
+            'punong_barangay' => $request->punong_barangay,
+        ]);
 
-    return back()->with('success', 'Complaint ' . $complaint->reference_number . ' updated to ' . strtoupper($request->status) . '.');
-}
+        return back()->with('success', 'Complaint ' . $complaint->reference_number . ' updated to ' . strtoupper($request->status) . '.');
+    }
+
     // Manage Users
     public function users(Request $request)
     {
-        $query = User::with('roles')->orderBy('created_at','desc');
+        $query = User::with('roles')->orderBy('created_at', 'desc');
 
         if ($request->role && $request->role !== 'all') {
             $query->role($request->role);
         }
 
         if ($request->search) {
-            $query->where(function($q) use ($request) {
-                $q->where('name','like','%'.$request->search.'%')
-                  ->orWhere('email','like','%'.$request->search.'%');
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                  ->orWhere('email', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -111,7 +120,7 @@ class AdminController extends Controller
 
         $user->syncRoles([$request->role]);
 
-        return back()->with('success', $user->name."'s role updated to ".$request->role.".");
+        return back()->with('success', $user->name . "'s role updated to " . $request->role . ".");
     }
 
     // Toggle Verify User
@@ -119,10 +128,10 @@ class AdminController extends Controller
     {
         if ($user->email_verified_at) {
             $user->update(['email_verified_at' => null]);
-            $msg = $user->name.' has been unverified.';
+            $msg = $user->name . ' has been unverified.';
         } else {
             $user->update(['email_verified_at' => now()]);
-            $msg = $user->name.' has been verified.';
+            $msg = $user->name . ' has been verified.';
         }
 
         return back()->with('success', $msg);
@@ -144,11 +153,15 @@ class AdminController extends Controller
     public function analytics()
     {
         $stats = [
-            'total'    => Complaint::count(),
-            'pending'  => Complaint::where('status','pending')->count(),
-            'review' => Complaint::where('status','for_review')->count(),
-            'resolved' => Complaint::where('status','resolved')->count(),
-            'rejected' => Complaint::where('status','rejected')->count(),
+            'total'     => Complaint::count(),
+            'pending'   => Complaint::where('status', 'pending')->count(),
+            'review'    => Complaint::where('status', 'for_review')->count(),
+            'resolved'  => Complaint::where('status', 'resolved')->count(),
+            'rejected'  => Complaint::where('status', 'rejected')->count(),
+            'scheduled' => Complaint::where('status', 'scheduled')->count(), // ✅ added
+            'ongoing'   => Complaint::where('status', 'ongoing')->count(),   // ✅ added
+            'escalated' => Complaint::where('status', 'escalated')->count(), // ✅ added
+            'closed'    => Complaint::where('status', 'closed')->count(),    // ✅ added
         ];
 
         $categories = Complaint::selectRaw('category, count(*) as total')
@@ -163,6 +176,6 @@ class AdminController extends Controller
             ->get()
             ->keyBy('month');
 
-        return view('admin.analytics', compact('stats','categories','monthly'));
+        return view('admin.analytics', compact('stats', 'categories', 'monthly'));
     }
 }
