@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 
 // ─── Landing Page (public) ───
 Route::get('/', function () {
@@ -13,11 +13,22 @@ Route::get('/offline', function () {
     return view('offline');
 })->name('offline');
 
+// ─── TEMPORARY: Setup Admin (DELETE AFTER USE) ───
+Route::get('/setup-admin', function () {
+    $user = App\Models\User::where('email', 'admin@test.com')->first();
+    if ($user) {
+        $user->password = Hash::make('Admin@123456');
+        $user->email_verified_at = now();
+        $user->save();
+        return 'Admin password updated! Login with Admin@123456';
+    }
+    return 'User not found!';
+});
+
 // ─── OCR Scan Route (backend proxy - hides API key) ───
 Route::post('/ocr/scan', function (Request $request) {
     $base64 = $request->input('image');
-
-    $response = Http::withHeaders([
+    $response = \Illuminate\Support\Facades\Http::withHeaders([
         'apikey' => env('OCR_SPACE_KEY')
     ])->asForm()->post('https://api.ocr.space/parse/image', [
         'base64Image'       => $base64,
@@ -27,7 +38,6 @@ Route::post('/ocr/scan', function (Request $request) {
         'scale'             => 'true',
         'OCREngine'         => '2',
     ]);
-
     return response()->json($response->json());
 })->middleware(['web'])->name('ocr.scan');
 
