@@ -21,7 +21,7 @@ class AdminController extends Controller
             'rejected'    => Complaint::where('status', 'rejected')->count(),
             'total_users' => User::count(),
             'residents'   => User::role('resident')->count(),
-            'staff'       => User::role('staff')->count(),
+            'staff'       => 0, // ✅ Staff role removed
         ];
 
         $recent = Complaint::with('user')
@@ -69,88 +69,88 @@ class AdminController extends Controller
 
     // Update Complaint Status
     public function updateStatus(Request $request, Complaint $complaint)
-{
-    $request->validate([
-        'status'          => 'required|in:pending,for_review,approved,rejected,scheduled,ongoing,resolved,escalated,closed',
-        'category'        => 'required|string|max:255',
-        'remarks'         => 'nullable|string|max:1000',
-        'hearing_date'    => 'nullable|date',
-        'hearing_time'    => 'nullable',
-        'punong_barangay' => 'nullable|string|max:255',
-    ]);
+    {
+        $request->validate([
+            'status'          => 'required|in:pending,for_review,approved,rejected,scheduled,ongoing,resolved,escalated,closed',
+            'category'        => 'required|string|max:255',
+            'remarks'         => 'nullable|string|max:1000',
+            'hearing_date'    => 'nullable|date',
+            'hearing_time'    => 'nullable',
+            'punong_barangay' => 'nullable|string|max:255',
+        ]);
 
-    $oldStatus = $complaint->status;
+        $oldStatus = $complaint->status;
 
-    $complaint->update([
-        'status'          => $request->status,
-        'category'        => $request->category,
-        'remarks'         => $request->remarks,
-        'hearing_date'    => $request->hearing_date,
-        'hearing_time'    => $request->hearing_time,
-        'punong_barangay' => $request->punong_barangay,
-    ]);
+        $complaint->update([
+            'status'          => $request->status,
+            'category'        => $request->category,
+            'remarks'         => $request->remarks,
+            'hearing_date'    => $request->hearing_date,
+            'hearing_time'    => $request->hearing_time,
+            'punong_barangay' => $request->punong_barangay,
+        ]);
 
-    // ─── Auto Notification ───
-    if ($oldStatus !== $request->status) {
-        $messages = [
-            'for_review' => [
-                'title'   => '📋 Complaint Under Review',
-                'message' => 'Your complaint ' . $complaint->reference_number . ' is now being reviewed by the Barangay.',
-                'type'    => 'info',
-            ],
-            'scheduled' => [
-                'title'   => '📅 Hearing Scheduled',
-                'message' => 'Your complaint ' . $complaint->reference_number . ' has a hearing scheduled on ' .
-                             ($request->hearing_date ? \Carbon\Carbon::parse($request->hearing_date)->format('F d, Y') : 'a date to be confirmed') .
-                             ($request->hearing_time ? ' at ' . \Carbon\Carbon::parse($request->hearing_time)->format('h:i A') : '') . '. Please appear at the Barangay Hall.',
-                'type'    => 'info',
-            ],
-            'ongoing' => [
-                'title'   => '⚖️ Mediation Ongoing',
-                'message' => 'The mediation process for your complaint ' . $complaint->reference_number . ' is now ongoing.',
-                'type'    => 'info',
-            ],
-            'approved' => [
-                'title'   => '✅ Complaint Approved',
-                'message' => 'Your complaint ' . $complaint->reference_number . ' has been approved and referred to the Pangkat ng Tagapagkasundo.',
-                'type'    => 'success',
-            ],
-            'resolved' => [
-                'title'   => '🎉 Complaint Resolved',
-                'message' => 'Your complaint ' . $complaint->reference_number . ' has been successfully resolved. Thank you for using BlotterLink.',
-                'type'    => 'success',
-            ],
-            'rejected' => [
-                'title'   => '❌ Complaint Rejected',
-                'message' => 'Your complaint ' . $complaint->reference_number . ' has been rejected.' .
-                             ($request->remarks ? ' Reason: ' . $request->remarks : ''),
-                'type'    => 'danger',
-            ],
-            'escalated' => [
-                'title'   => '⚠️ Case Escalated',
-                'message' => 'Your complaint ' . $complaint->reference_number . ' has been escalated and may now be filed in court/government office.',
-                'type'    => 'warning',
-            ],
-            'closed' => [
-                'title'   => '🔒 Case Closed',
-                'message' => 'Your complaint ' . $complaint->reference_number . ' has been officially closed.',
-                'type'    => 'info',
-            ],
-        ];
+        // ─── Auto Notification ───
+        if ($oldStatus !== $request->status) {
+            $messages = [
+                'for_review' => [
+                    'title'   => '📋 Complaint Under Review',
+                    'message' => 'Your complaint ' . $complaint->reference_number . ' is now being reviewed by the Barangay.',
+                    'type'    => 'info',
+                ],
+                'scheduled' => [
+                    'title'   => '📅 Hearing Scheduled',
+                    'message' => 'Your complaint ' . $complaint->reference_number . ' has a hearing scheduled on ' .
+                                 ($request->hearing_date ? \Carbon\Carbon::parse($request->hearing_date)->format('F d, Y') : 'a date to be confirmed') .
+                                 ($request->hearing_time ? ' at ' . \Carbon\Carbon::parse($request->hearing_time)->format('h:i A') : '') . '. Please appear at the Barangay Hall.',
+                    'type'    => 'info',
+                ],
+                'ongoing' => [
+                    'title'   => '⚖️ Mediation Ongoing',
+                    'message' => 'The mediation process for your complaint ' . $complaint->reference_number . ' is now ongoing.',
+                    'type'    => 'info',
+                ],
+                'approved' => [
+                    'title'   => '✅ Complaint Approved',
+                    'message' => 'Your complaint ' . $complaint->reference_number . ' has been approved and referred to the Pangkat ng Tagapagkasundo.',
+                    'type'    => 'success',
+                ],
+                'resolved' => [
+                    'title'   => '🎉 Complaint Resolved',
+                    'message' => 'Your complaint ' . $complaint->reference_number . ' has been successfully resolved. Thank you for using KP App.',
+                    'type'    => 'success',
+                ],
+                'rejected' => [
+                    'title'   => '❌ Complaint Rejected',
+                    'message' => 'Your complaint ' . $complaint->reference_number . ' has been rejected.' .
+                                 ($request->remarks ? ' Reason: ' . $request->remarks : ''),
+                    'type'    => 'danger',
+                ],
+                'escalated' => [
+                    'title'   => '⚠️ Case Escalated',
+                    'message' => 'Your complaint ' . $complaint->reference_number . ' has been escalated and may now be filed in court/government office.',
+                    'type'    => 'warning',
+                ],
+                'closed' => [
+                    'title'   => '🔒 Case Closed',
+                    'message' => 'Your complaint ' . $complaint->reference_number . ' has been officially closed.',
+                    'type'    => 'info',
+                ],
+            ];
 
-        if (isset($messages[$request->status])) {
-            \App\Models\ComplaintNotification::create([
-                'user_id'      => $complaint->user_id,
-                'complaint_id' => $complaint->id,
-                'title'        => $messages[$request->status]['title'],
-                'message'      => $messages[$request->status]['message'],
-                'type'         => $messages[$request->status]['type'],
-            ]);
+            if (isset($messages[$request->status])) {
+                \App\Models\ComplaintNotification::create([
+                    'user_id'      => $complaint->user_id,
+                    'complaint_id' => $complaint->id,
+                    'title'        => $messages[$request->status]['title'],
+                    'message'      => $messages[$request->status]['message'],
+                    'type'         => $messages[$request->status]['type'],
+                ]);
+            }
         }
-    }
 
-    return back()->with('success', 'Complaint ' . $complaint->reference_number . ' updated to ' . strtoupper($request->status) . '.');
-}
+        return back()->with('success', 'Complaint ' . $complaint->reference_number . ' updated to ' . strtoupper($request->status) . '.');
+    }
 
     // Manage Users
     public function users(Request $request)
@@ -177,7 +177,7 @@ class AdminController extends Controller
     public function updateRole(Request $request, User $user)
     {
         $request->validate([
-            'role' => 'required|in:resident,staff,admin',
+            'role' => 'required|in:resident,admin', // ✅ removed staff
         ]);
 
         $user->syncRoles([$request->role]);
@@ -277,6 +277,7 @@ class AdminController extends Controller
             ->setPaper('a4', 'portrait');
         return $pdf->stream('KP-Form-22-' . $complaint->reference_number . '.pdf');
     }
+
     public function formPangkat(Complaint $complaint)
     {
         $pdf = Pdf::loadView('admin.forms.form10', compact('complaint'))
