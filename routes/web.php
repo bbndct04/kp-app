@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 // ─── Landing Page (public) ───
 Route::get('/', function () {
@@ -10,6 +12,24 @@ Route::get('/', function () {
 Route::get('/offline', function () {
     return view('offline');
 })->name('offline');
+
+// ─── OCR Scan Route (backend proxy - hides API key) ───
+Route::post('/ocr/scan', function (Request $request) {
+    $base64 = $request->input('image');
+
+    $response = Http::withHeaders([
+        'apikey' => env('OCR_SPACE_KEY')
+    ])->asForm()->post('https://api.ocr.space/parse/image', [
+        'base64Image'       => $base64,
+        'language'          => 'eng',
+        'isOverlayRequired' => 'false',
+        'detectOrientation' => 'true',
+        'scale'             => 'true',
+        'OCREngine'         => '2',
+    ]);
+
+    return response()->json($response->json());
+})->middleware(['web'])->name('ocr.scan');
 
 // ─── Dashboard (role-based redirect) ───
 Route::get('/dashboard', function () {
@@ -53,7 +73,7 @@ Route::get('/profile', function () {
     return view('resident.profile');
 })->middleware(['auth'])->name('profile');
 
-Route::patch('/profile/update', function (\Illuminate\Http\Request $request) {
+Route::patch('/profile/update', function (Request $request) {
     $user = auth()->user();
     $request->validate([
         'name'  => 'required|string|max:255',
@@ -63,7 +83,7 @@ Route::patch('/profile/update', function (\Illuminate\Http\Request $request) {
     return back()->with('success', 'Profile updated successfully!');
 })->middleware(['auth'])->name('profile.update');
 
-// ─── Notifications (Resident) ─── ✅ MOVED OUTSIDE admin group
+// ─── Notifications (Resident) ───
 Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])
     ->middleware(['auth'])->name('notifications');
 
